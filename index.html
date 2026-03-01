@@ -1,0 +1,2650 @@
+<!-- 归墟互动电影系统 · 神思庭出品 · Copyright © 2025 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>归墟 · 山海经拱门驾驶舱</title>
+    <meta name="copyright" content="神思庭 (Shensist) shensist.top">
+    <meta name="author" content="金威">
+    <link rel="icon" href="./logo_ts.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* ===== 驾驶舱容器 ===== */
+        .cockpit {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        /* 山海经背景图轮播 */
+        .bg-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            filter: brightness(0.7) contrast(1.2) saturate(1.3);
+        }
+        
+        .bg-image.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        /* 赛博微光 */
+        .cyber-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(0, 255, 255, 0.15), transparent 70%);
+            mix-blend-mode: overlay;
+            z-index: 3;
+            pointer-events: none;
+            animation: glowPulse 8s infinite;
+        }
+        
+        @keyframes glowPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+        
+        /* 前挡风玻璃 */
+        .windshield {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 70%;
+            background: rgba(10, 30, 50, 0.1);
+            border: 3px solid rgba(0, 255, 255, 0.5);
+            border-radius: 100px 100px 30px 30px;
+            box-shadow: 
+                0 0 80px rgba(0, 255, 255, 0.3),
+                inset 0 0 100px rgba(0, 100, 200, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.6;   /* 调低一点，更通透 */
+            z-index: 11;
+        }
+        
+        /* 归墟箴言 */
+        #mantra {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 255, 0.7);
+            font-size: 36px;
+            white-space: nowrap;
+            text-shadow: 0 0 50px rgba(0, 255, 255, 0.8);
+            letter-spacing: 8px;
+            z-index: 20;
+            animation: mantraGlow 4s infinite;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 40px;
+            border-radius: 60px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        @keyframes mantraGlow {
+            0% { opacity: 0.6; text-shadow: 0 0 30px rgba(0,255,255,0.6); }
+            50% { opacity: 1; text-shadow: 0 0 80px rgba(0,255,255,1); }
+            100% { opacity: 0.6; text-shadow: 0 0 30px rgba(0,255,255,0.6); }
+        }
+        
+        /* ============================================================
+           🌟 1. 左侧战术副屏：解除底部枷锁，让内部元素自由生长
+           ============================================================ */
+        #leftTacticalPanel {
+            position: absolute !important;
+            top: 90px !important;
+            left: 25px !important;
+            width: 250px !important; /* 锁定面板宽度 */
+            /* ⚠️ 核心修复：删除了 bottom 限制，防止小屏幕下把两个框挤压重叠 */
+            display: flex !important;
+            flex-direction: column !important; /* 强制上下排队 */
+            gap: 20px !important; /* 强制拉开 20 像素的绝对隔离带，死都不会重叠！ */
+            z-index: 50 !important;
+            pointer-events: none !important;
+        }
+
+        /* ============================================================
+           🌟 2. 双子星屏幕同调：视频与诗文高度、宽度、比例【绝对一致】
+           ============================================================ */
+        #leftTacticalPanel #tacticalVideo,
+        #leftTacticalPanel #poemCard {
+            position: relative !important; /* ⚠️ 物理降维打击：剥夺飘浮能力，老实排队 */
+            top: auto !important;
+            left: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            aspect-ratio: 9 / 16 !important; /* ⚠️ 绝对同调：两者都被强制锁死为 9:16 竖屏大小！ */
+            margin: 0 !important;
+            flex-shrink: 0 !important; /* 无论屏幕多小，都绝对不准压缩变形！ */
+            pointer-events: auto !important;
+        }
+
+        /* 视频专属特效 */
+        #leftTacticalPanel #tacticalVideo {
+            border-radius: 12px !important;
+            border: 2px solid #0ff !important;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4) !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+
+        /* 诗文框专属特效 */
+        #leftTacticalPanel #poemCard {
+            background: rgba(0,0,0,0.8) !important;
+            border: 1px solid rgba(0, 255, 255, 0.5) !important;
+            padding: 15px !important;
+            border-radius: 12px !important;
+            font-size: 13px !important;
+            line-height: 1.8 !important;
+            color: #ccc !important;
+            overflow-y: auto !important; /* 只有文字极多时才出滚动条 */
+            scrollbar-width: none !important;
+            transition: all 0.5s !important;
+        }
+        #leftTacticalPanel #poemCard::-webkit-scrollbar { display: none !important; }
+
+        /* ============================================================
+           🌟 3. 修复快捷键 1：全屏巨幕 (权重提升版)
+           让选择器包含 #leftTacticalPanel，从而击败普通模式的锁定！
+           ============================================================ */
+        #leftTacticalPanel #tacticalVideo.movie-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: none !important;
+            
+            /* 解除 9:16 锁定，允许横屏电影铺满 */
+            aspect-ratio: auto !important; 
+            
+            border-radius: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            z-index: 9999 !important;
+            
+            /* 保持原比例，黑边填充 */
+            object-fit: contain !important; 
+            background-color: #000 !important;
+        }
+
+        /* ============================================================
+           🌟 4. 修复快捷键 2：修神古卷轴 (内容显形终极版)
+           使用 Flex 布局强制内容居中，并显式点亮内部文字
+           ============================================================ */
+        body.literary-mode #leftTacticalPanel #poemCard {
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            transform: none !important; margin: 0 !important;
+            
+            /* 🌟 核心修复：改用 Flex 布局，让文字强制上下左右居中！ */
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            
+            aspect-ratio: auto !important; /* 解除比例锁定 */
+            background: radial-gradient(circle at center, rgba(10, 30, 45, 0.98) 0%, rgba(0, 5, 10, 1) 100%) !important;
+            backdrop-filter: blur(20px) !important;
+            border: none !important; border-radius: 0 !important;
+            z-index: 9999 !important;
+            overflow-y: auto !important; /* 内容太多时允许滚动 */
+            pointer-events: auto !important;
+        }
+
+        /* 🌟 强制点亮内部的所有文字与内容 */
+        body.literary-mode #leftTacticalPanel #poemCard .poem-title,
+        body.literary-mode #leftTacticalPanel #poemCard #poemContent {
+            display: block !important; /* 确保不被隐藏 */
+            opacity: 1 !important;
+            visibility: visible !important;
+            color: #d4f3ff !important;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 5px rgba(0, 255, 255, 0.8) !important;
+            text-align: center !important;
+            width: 80% !important; /* 防止文字太宽顶到屏幕边缘 */
+        }
+
+        /* 全屏模式下标题的专属样式 */
+        body.literary-mode #leftTacticalPanel #poemCard .poem-title {
+            font-family: 'STKaiti', 'KaiTi', '楷体', serif !important;
+            font-size: 5vw !important; /* 超大标题 */
+            margin-bottom: 60px !important;
+            letter-spacing: 30px !important;
+        }
+
+        /* 全屏模式下正文的专属样式 */
+        body.literary-mode #leftTacticalPanel #poemCard #poemContent {
+            font-family: 'STKaiti', 'KaiTi', '楷体', serif !important;
+            font-size: 3vw !important; /* 适合阅读的大字体 */
+            line-height: 2.2 !important;
+        }
+        #musicHub {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 15, 30, 0.7);
+            padding: 3px 3px 3px 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 🌟 中央主屏：纯粹的商战裁决视界 */
+        #bombArea {
+            position: absolute;
+            top: 25%; /* 放在正中央黄金视觉位 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-width: 1000px;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        #dagyaoText {
+            color: #f00;
+            font-size: 28px; /* 字体非常大 */
+            text-shadow: 0 0 30px #f00;
+            background: rgba(20, 0, 0, 0.85); /* 更深的血色背景 */
+            padding: 30px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid #f00;
+            line-height: 1.6;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5), inset 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        /* 🌟 上瘾机制：暴击震动特效 */
+        .shake-hard {
+            animation: shakeScreen 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .shake-extreme {
+            animation: shakeScreenExtreme 0.8s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .shake-light {
+            animation: shakeScreenLight 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shakeScreen {
+            10%, 90% { transform: translate3d(-5px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 5px, 0); }
+            30%, 50%, 70% { transform: translate3d(-10px, -5px, 0); }
+            40%, 60% { transform: translate3d(10px, 5px, 0); }
+        }
+        @keyframes shakeScreenExtreme {
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            10% { transform: translate3d(-15px, 0, 0) rotate(-2deg); }
+            20% { transform: translate3d(15px, 10px, 0) rotate(2deg); }
+            30% { transform: translate3d(-20px, -10px, 0) rotate(-3deg); }
+            40% { transform: translate3d(20px, 10px, 0) rotate(3deg); }
+            50% { transform: translate3d(-25px, -15px, 0) rotate(-4deg); }
+            60% { transform: translate3d(25px, 15px, 0) rotate(4deg); }
+            70% { transform: translate3d(-15px, -10px, 0) rotate(-2deg); }
+            80% { transform: translate3d(15px, 5px, 0) rotate(2deg); }
+            90% { transform: translate3d(-5px, 0, 0) rotate(-1deg); }
+        }
+        @keyframes shakeScreenLight {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 1px, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, -1px, 0); }
+            40%, 60% { transform: translate3d(3px, 1px, 0); }
+        }
+        
+        /* 🌟 字符特效动画 */
+        @keyframes charBurst {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes charFade {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes charFlicker {
+            0%, 100% { opacity: 1; }
+            25% { opacity: 0.3; }
+            50% { opacity: 1; }
+            75% { opacity: 0.5; }
+        }
+        @keyframes completionPulse {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        @keyframes godPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* 拱形仪表盘 */
+        .arch-dashboard {
+            position: absolute;
+            bottom: 12%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1400px;
+            height: 280px; /* 从 200px 增高到 280px，拉出巨大的拱门空间 */
+            z-index: 30;
+            pointer-events: none;
+        }
+        
+        /* 2. 虚线 SVG 层 */
+        .arch-svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.5));
+        }
+        
+        .arch-path {
+            fill: none;
+            stroke: #0ff;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 10 10;
+            animation: dashMove 30s linear infinite;
+        }
+        
+        @keyframes dashMove {
+            to { stroke-dashoffset: -100; }
+        }
+        
+        /* 3. 修改仪表盘的对齐方式，从底部对齐改为顶部对齐 */
+        .gauge-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start; /* 关键修改：顶部对齐 */
+            padding: 0 2%;
+            z-index: 31;
+            pointer-events: auto;
+        }
+        
+        /* ===== 全息圆角仪表盘（赛博气泡流线型） ===== */
+        .gauge {
+            text-align: center;
+            color: #0ff;
+            text-shadow: 0 0 15px #0ff;
+            font-size: 18px;
+            letter-spacing: 3px;
+            width: 22%;
+            /* 柔和的深邃玻璃渐变，与大屏外框质感无缝统一 */
+            background: linear-gradient(135deg, rgba(0, 25, 45, 0.65) 0%, rgba(0, 5, 15, 0.9) 100%);
+            backdrop-filter: blur(15px);
+            /* 核心调整：大圆角设计，极致平滑的赛博感 */
+            border-radius: 25px; 
+            /* 一体成型的霓虹微光边框 */
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.6), 
+                0 0 20px rgba(0, 255, 255, 0.15),
+                inset 0 0 15px rgba(0, 255, 255, 0.1);
+            padding: 15px 5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden; /* 让内部的流光扫描不出界 */
+        }
+
+        /* 动态科技感：赛博流光扫面效果 */
+        .gauge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transform: skewX(-25deg);
+            animation: cyberSweep 4s infinite;
+            pointer-events: none;
+        }
+
+        /* 控制流光扫过的频率和停顿 */
+        @keyframes cyberSweep {
+            0% { left: -100%; }
+            15% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        /* 悬停/数值飙升时的紫红色狂暴反馈 */
+        .gauge:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: #f0f;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.8),
+                0 0 35px rgba(255, 0, 255, 0.4), 
+                inset 0 0 25px rgba(255, 0, 255, 0.25);
+        }
+
+        /* 4. 核心！让四个仪表盘呈现拱形错落排列，完美避开输入框 */
+        .gauge:nth-child(1), .gauge:nth-child(4) {
+            margin-top: 120px; /* 两侧的【命盘】和【当前神】下降，贴合圆弧底部 */
+        }
+        .gauge:nth-child(2), .gauge:nth-child(3) {
+            margin-top: 10px;  /* 中间的【杀意】和【撕裂】抬高，骑在圆弧顶端 */
+        }
+        
+        .gauge-label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: rgba(0, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        .gauge-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 30px #0ff;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #currentGodValue {
+            color: #f0f;
+            text-shadow: 0 0 30px #f0f;
+        }
+        
+        /* 撕裂值数字跳动效果 */
+        #sile {
+            animation: jump 0.4s;
+        }
+        @keyframes jump {
+            0% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 人类驾驶员 */
+        .pilot-area {
+            position: absolute;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            z-index: 35;
+            pointer-events: none;
+        }
+        
+        .pilot {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .pilot-female { display: block; }
+        .pilot-male { display: none; }
+        .pilot.female .pilot-female { display: block; }
+        .pilot.female .pilot-male { display: none; }
+        .pilot.male .pilot-female { display: none; }
+        .pilot.male .pilot-male { display: block; }
+        
+        .female-body {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #aaddff, #77aaff);
+            border-radius: 30px 30px 10px 10px;
+            box-shadow: 0 0 40px rgba(100, 200, 255, 0.8);
+            border: 2px solid #0ff;
+            z-index: 2;
+        }
+        
+        .female-head {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffddbb, #ffccaa);
+            border-radius: 50%;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(255, 200, 150, 0.8);
+            z-index: 3;
+        }
+        
+        .female-head::before {
+            content: '♀';
+            position: absolute;
+            top: 5px;
+            right: -15px;
+            color: #f0f;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 20px #f0f;
+        }
+        
+        .male-body {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 90px;
+            background: linear-gradient(135deg, #88aaff, #5577dd);
+            border-radius: 35px 35px 10px 10px;
+            box-shadow: 0 0 40px rgba(50, 150, 255, 0.8);
+            border: 2px solid #0ff;
+            z-index: 2;
+        }
+        
+        .male-head {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ffccaa, #ffbb99);
+            border-radius: 50%;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(255, 180, 130, 0.8);
+            z-index: 3;
+        }
+        
+        .male-head::before {
+            content: '♂';
+            position: absolute;
+            top: 5px;
+            right: -15px;
+            color: #0ff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 20px #0ff;
+        }
+        
+        .chair-back {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 100px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+        
+        /* 性别切换 */
+        .gender-switch {
+            position: absolute;
+            bottom: 12%;
+            left: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #0ff;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        
+        .gender-switch:hover {
+            background: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 30px #0ff;
+        }
+        
+        /* 🌟 2. 巨型输入中枢：让驾驶员畅所欲言！ */
+        #inputArea {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 75%; /* 加宽！跨度更大 */
+            max-width: 1200px; 
+            display: flex;
+            gap: 20px;
+            z-index: 45;
+            pointer-events: auto;
+            align-items: center;
+        }
+
+        /* 🌟 4. 百字长文输入框样式：匹配多行高度 */
+        #textInput {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(0, 25, 45, 0.85) 0%, rgba(0, 5, 15, 0.95) 100%);
+            border-radius: 20px; /* 稍微收敛圆角，适应多行文本 */
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            padding: 15px 25px; 
+            color: #fff;
+            font-size: 18px; 
+            line-height: 1.6;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 255, 255, 0.2);
+            outline: none;
+            resize: none; /* 禁止玩家手动拖拽改变输入框大小，防止破坏 UI */
+            height: 90px; /* 给足三行文字的物理高度 */
+            font-family: 'Microsoft YaHei', sans-serif;
+            overflow-y: auto; /* 字超多了能在框内滚动 */
+        }
+        #textInput::-webkit-scrollbar { width: 5px; }
+        #textInput::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.3); border-radius: 5px; }
+
+        /* ===== 全息能量发送按钮 ===== */
+        #sendBtn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            /* 晶莹剔透的按钮质感 */
+            background: linear-gradient(135deg, rgba(0, 40, 80, 0.8), rgba(0, 150, 255, 0.3));
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            color: #0ff;
+            font-size: 22px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.2), 
+                inset 0 0 15px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 鼠标悬停：积蓄紫红能量，准备发射 */
+        #sendBtn:hover {
+            background: linear-gradient(135deg, rgba(60, 0, 60, 0.8), rgba(255, 0, 255, 0.4));
+            border-color: #f0f;
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            box-shadow: 
+                0 0 35px rgba(255, 0, 255, 0.6), 
+                inset 0 0 20px rgba(255, 0, 255, 0.4);
+            transform: scale(1.1) rotate(15deg); /* 点击前微微扭转的蓄力感 */
+        }
+        
+        /* ===== 全息语音收音按钮 ===== */
+        #voiceBtn {
+            /* 取消原有的绝对定位，让它自然排列在 flex 布局中 */
+            position: relative;
+            bottom: auto; left: auto; transform: none;
+            
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            /* 采用暗红/紫色的赛博微光，与发送按钮形成视觉区分 */
+            background: linear-gradient(135deg, rgba(80, 0, 30, 0.8), rgba(255, 50, 100, 0.3));
+            border: 1px solid rgba(255, 0, 100, 0.5);
+            color: #ff3366;
+            font-size: 22px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 100, 0.2), 
+                inset 0 0 15px rgba(255, 0, 100, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 鼠标悬停：语音按钮的狂暴蓄力 */
+        #voiceBtn:hover {
+            background: linear-gradient(135deg, rgba(120, 0, 40, 0.9), rgba(255, 0, 100, 0.5));
+            border-color: #ff3366;
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            box-shadow: 
+                0 0 35px rgba(255, 0, 100, 0.6), 
+                inset 0 0 20px rgba(255, 0, 100, 0.4);
+            transform: scale(1.1);
+        }
+        
+        /* 素材样式 */
+        video, audio {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(255,0,0,0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+        }
+        
+                
+        /* 粒子画布 */
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        /* ==========================================
+           🌟 神经链路提示枢纽 (快捷键说明)
+           ========================================== */
+        #protocolHint {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 15, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #0ff;
+            font-size: 22px;
+            cursor: crosshair;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        /* 鼠标悬停时：符文变紫红，蓄力爆发 */
+        #protocolHint:hover {
+            border-color: #f0f;
+            color: #f0f;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* 隐藏的下拉全息面板 */
+        .hint-tooltip {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 260px;
+            background: linear-gradient(135deg, rgba(0, 10, 25, 0.95), rgba(20, 0, 20, 0.95));
+            border: 1px solid #f0f;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: #0ff;
+            font-size: 13px;
+            line-height: 2.2;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 30px rgba(255, 0, 255, 0.3), inset 0 0 15px rgba(255, 0, 255, 0.1);
+            backdrop-filter: blur(15px);
+            
+            /* 动画初始状态：透明且向上偏移 */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            pointer-events: none; /* 防止遮挡下方点击 */
+        }
+
+        /* 全息面板顶部的连接小三角 */
+        .hint-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -7px;
+            right: 16px;
+            width: 12px;
+            height: 12px;
+            background: rgba(0, 10, 25, 0.95);
+            border-top: 1px solid #f0f;
+            border-left: 1px solid #f0f;
+            transform: rotate(45deg);
+        }
+
+        /* 面板标题样式 */
+        .hint-tooltip strong {
+            color: #f0f;
+            display: block;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed rgba(255, 0, 255, 0.4);
+            padding-bottom: 5px;
+            font-size: 14px;
+            text-shadow: 0 0 10px #f0f;
+        }
+
+        /* 触发悬停：面板向下滑出并显形 */
+        #protocolHint:hover .hint-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* ===== 右上角统一指挥枢纽 ===== */
+        #topRightControls {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            align-items: flex-start; /* 顶部对齐 */
+            gap: 15px; /* 静音按钮和面板之间的安全距离 */
+        }
+
+        /* 静音按钮（移除绝对定位，随父级布局） */
+        #muteBtn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 15, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #0ff;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* 防止被挤压 */
+        }
+        #muteBtn:hover {
+            border-color: #0ff;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        #muteBtn.muted {
+            border-color: #f00; color: #f00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        /* 多模型配置面板 */
+        #apiConfigPanel {
+            background: rgba(0, 10, 20, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column; /* 垂直排列内容 */
+            gap: 10px;
+            transition: all 0.3s;
+            opacity: 0.3; /* 默认半透明，鼠标移入亮起 */
+        }
+        #apiConfigPanel:hover { opacity: 1; border-color: #0ff; }
+        
+        #apiConfigPanel input, #apiConfigPanel select {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            color: #0ff;
+            padding: 8px 10px;
+            border-radius: 5px;
+            outline: none;
+            width: 260px;
+            font-family: inherit;
+        }
+        #apiConfigPanel select option, #apiConfigPanel optgroup {
+            background: #000; color: #0ff;
+        }
+        #apiConfigPanel input:focus, #apiConfigPanel select:focus {
+            border-color: #f0f; box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        #apiConfigPanel button {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #0ff;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        #apiConfigPanel button:hover {
+            background: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 15px #0ff;
+        }
+
+        /* ==========================================
+           🌟 API 神经链路物理指示灯
+           ========================================== */
+        #apiSubmitBtn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* 让灯和文字保持距离 */
+        }
+
+        #apiStatusLight {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #555; /* 默认未激活的熄灭状态 */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        /* 正在连接：高频闪烁青光 */
+        .status-loading {
+            background-color: #0ff !important;
+            box-shadow: 0 0 15px #0ff, inset 0 0 5px #fff !important;
+            animation: pulseCyan 0.4s infinite alternate;
+        }
+
+        /* 连接成功：常亮幽绿光 */
+        .status-green {
+            background-color: #0f0 !important;
+            box-shadow: 0 0 15px #0f0, inset 0 0 5px #fff !important;
+        }
+
+        /* 连接断裂/报错：狂暴红光警报 */
+        .status-red {
+            background-color: #f00 !important;
+            box-shadow: 0 0 20px #f00, inset 0 0 5px #fff !important;
+            animation: pulseRed 0.3s infinite alternate;
+        }
+
+        @keyframes pulseCyan { from { opacity: 0.4; } to { opacity: 1; } }
+        @keyframes pulseRed { from { opacity: 0.5; } to { opacity: 1; transform: scale(1.1); } }
+
+        /* ===== 第一人称座舱物理锚点 ===== */
+        .cockpit-anchor {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 200px;
+            z-index: 40; /* 低于输入框(45)，高于大屏背景(30) */
+            pointer-events: none; /* 绝对不阻挡任何鼠标点击 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* 全息驾驶员背影（半透明、不突兀、充满科技感） */
+        .holo-pilot {
+            position: relative;
+            width: 130px;
+            height: 150px;
+            margin-bottom: -50px; /* 下沉到操作台内部，形成纵深立体感 */
+            opacity: 0.85;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4));
+            /* 模拟人在驾驶时的微弱呼吸起伏 */
+            animation: pilotBreathe 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pilotBreathe {
+            0% { transform: translateY(0); opacity: 0.7; }
+            100% { transform: translateY(-5px); opacity: 0.95; }
+        }
+
+        .holo-head {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 55px;
+            /* 幽蓝色的全息头部 */
+            background: radial-gradient(ellipse at 50% 30%, rgba(0, 255, 255, 0.8), rgba(0, 30, 60, 0.9));
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            border-radius: 40% 40% 50% 50%;
+            box-shadow: inset 0 0 15px #0ff, 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* 驾驶员后颈部的神经元接入光带 */
+        .holo-head::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 4px;
+            background: #f0f;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #f0f;
+        }
+
+        .holo-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 90px;
+            background: linear-gradient(to bottom, rgba(0, 150, 255, 0.25), rgba(0, 10, 20, 0.95));
+            border-top: 2px solid rgba(0, 255, 255, 0.5);
+            border-radius: 45px 45px 0 0;
+            box-shadow: inset 0 15px 20px rgba(0, 255, 255, 0.15);
+        }
+
+        /* 实体弧形主控台 (完美托起您的输入框) */
+        .control-desk {
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(0, 25, 40, 0.95), #000);
+            border-top: 2px solid #0ff;
+            /* 打造出一种环绕驾驶员的巨大弧面感 */
+            border-radius: 50% 50% 0 0 / 25px 25px 0 0;
+            box-shadow: 
+                0 -10px 40px rgba(0, 255, 255, 0.15), 
+                inset 0 10px 20px rgba(0, 255, 255, 0.2);
+            position: relative;
+        }
+
+        /* 控制台边缘的扫描高光 */
+        .control-desk::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30%;
+            height: 3px;
+            background: #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px #0ff;
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        /* ===== 官网版权标识 ===== */
+        #brandLogo {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 15, 30, 0.7);
+            padding: 8px 20px 8px 8px;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+            transition: all 0.3s;
+        }
+        #brandLogo:hover {
+            border-color: #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+        }
+        #brandLogo img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 1px solid #0ff;
+            box-shadow: 0 0 10px #0ff;
+            /* 如果原图是黑色，可以用 filter: invert(1) 反转为白色 */
+        }
+        .copyright a {
+            color: rgba(0, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-weight: bold;
+        }
+        .copyright a:hover {
+            color: #fff;
+            text-shadow: 0 0 15px #0ff;
+        }
+
+    /* 视频轰炸专属：全息投影质感 */
+        .holo-video {
+            width: 80%;
+            max-width: 400px; /* 控制视频不要太大，免得挡住UI */
+            height: auto;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            box-shadow: 
+                0 0 25px rgba(0, 255, 255, 0.2),
+                inset 0 0 15px rgba(0, 255, 255, 0.3);
+            opacity: 0.9;
+            mix-blend-mode: screen; /* 与黑底融为一体，赛博感极强 */
+            transition: all 0.3s ease;
+        }
+        
+        .holo-video:hover {
+            border-color: #f0f;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+            opacity: 1;
+            mix-blend-mode: normal;
+        }
+
+    /* ===== 全屏沉浸式电影巨幕 ===== */
+        .fullscreen-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保证视频填满整个屏幕且不变形 */
+            z-index: 2; /* 盖住静态背景图，但在玻璃和微光之下 */
+            opacity: 0; /* 默认隐藏 */
+            transition: opacity 1.5s ease-in-out; /* 电影级的淡入淡出 */
+            pointer-events: none; /* 绝对不阻挡鼠标点击 */
+            filter: brightness(0.6) contrast(1.2) saturate(1.2); /* 压暗亮度，突出前方UI和大妖红字 */
+        }
+        
+        .fullscreen-video.active {
+            opacity: 1;
+        }
+
+    /* ===== 互动电影全屏巨幕（强制破除 180px 封印版） ===== */
+        .fullscreen-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            
+            /* 打破全局 video 标签的紧箍咒！ */
+            max-height: none !important; 
+            max-width: none !important;
+            border: none !important;       /* 剥夺青色边框 */
+            box-shadow: none !important;   /* 剥夺红色发光 */
+            border-radius: 0 !important;   /* 恢复直角铺满屏幕 */
+            
+            object-fit: cover;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out; 
+            pointer-events: none;
+            filter: brightness(0.6) contrast(1.2) saturate(1.2);
+        }
+        
+        .fullscreen-video.active {
+            opacity: 1;
+        }
+
+    /* ===== 视频：战术小窗 vs 电影巨幕 ===== */
+        #media-video {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;           /* 默认战术小窗大小 */
+            border-radius: 15px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            z-index: 50;            /* 默认在 UI 层 */
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;             /* 默认隐藏，触发时显示 */
+        }
+
+        /* 按下快捷键 1：化身电影巨幕 */
+        #media-video.movie-mode {
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            z-index: 5;             /* 退到玻璃和UI的底层 */
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        
+        
+        /* 按下全屏模式时，隐藏其他无关 UI 增强沉浸感 */
+        body.movie-mode .arch-dashboard, 
+        body.movie-mode #inputArea,
+        body.literary-mode .arch-dashboard,
+        body.literary-mode #inputArea {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    /* 强制拉开战歌与诗文的间距 */
+        #contentBomb { 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px; /* 绝对隔离：上下拉开25像素 */
+            margin-top: 20px;
+        }
+
+        /* ===== 战术小窗（移至左侧，完美避开右上角的API控制台） ===== */
+        #tacticalVideo {
+            position: absolute;
+            top: 90px;      
+            left: 25px;     
+            width: 320px;
+            border-radius: 12px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            z-index: 50; 
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0; 
+            pointer-events: none;
+        }
+
+        /* 🌟 按下 1：化身绝对的纯净全屏巨幕（原比例保护版） */
+        #tacticalVideo.movie-mode {
+            top: 0;
+            left: 0;        
+            width: 100vw;
+            height: 100vh;
+            max-height: none !important;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            z-index: 9999 !important; 
+            
+            /* 🌟 核心抢救：从 cover 改为 contain，誓死保卫 9:16 和 16:9 原生比例！ */
+            object-fit: contain; 
+            
+            /* 🌟 影院级黑场：多余的空间自动用深邃纯黑填充，不暴露底层 UI */
+            background-color: #000; 
+            
+            filter: brightness(1) !important; 
+            pointer-events: auto;
+        }
+        
+        /* 🌟 沉浸式隐身咒：强制抹除所有杂念 UI */
+        body.movie-mode .arch-dashboard, 
+        body.movie-mode #inputArea,
+        body.movie-mode #bombArea,        
+        body.movie-mode #mantra,          
+        body.movie-mode .windshield,      
+        body.movie-mode .cockpit-anchor,  
+        body.movie-mode #brandLogo,       
+        body.movie-mode #topRightControls,
+        body.movie-mode .gender-switch,
+        
+        body.literary-mode .arch-dashboard,
+        body.literary-mode #inputArea,
+        body.literary-mode #mantra,
+        body.literary-mode .windshield,
+        body.literary-mode .cockpit-anchor,
+        body.literary-mode #brandLogo,
+        body.literary-mode #topRightControls,
+        body.literary-mode .gender-switch,
+        body.literary-mode #tacticalVideo /* 🌟 核心修复：修神模式下，必须把左上角的战术视频小窗也抹除！ */
+        {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.4s ease-out;
+        }
+
+        /* 🌟 诗文模式专属剔除：隐藏大妖咆哮文本和音乐标题，只留纯净诗文！ */
+        body.literary-mode #dagyaoText,
+        body.literary-mode .bomb-label {
+            display: none !important;
+        }
+
+        
+        /* 🌟 按下快捷键 2：化身绝对全屏的修神古卷轴 */
+        body.literary-mode .poem-card {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            transform: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 10vh 15vw !important; /* 顶部留出 10% 的安全呼吸空间，不再从最边缘开始 */
+            
+            background: radial-gradient(circle at center, rgba(10, 30, 45, 0.98) 0%, rgba(0, 5, 10, 1) 100%) !important;
+            backdrop-filter: blur(20px) !important;
+            border: none !important;
+            border-radius: 0 !important;
+            z-index: 9999 !important;
+            
+            font-family: 'STKaiti', 'KaiTi', '楷体', 'Microsoft YaHei', serif !important;
+            font-size: 3.5vw !important; 
+            color: #d4f3ff !important;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 5px rgba(0, 255, 255, 0.8) !important;
+            line-height: 1.8 !important;
+            text-align: center !important;
+            
+            /* 🌟 破除 Flex 居中封印，改回正常的块级排版，彻底解决顶部被切掉的 Bug！ */
+            display: block !important; 
+            overflow-y: auto !important;
+            pointer-events: auto !important;
+        }
+        
+        body.literary-mode .poem-card::-webkit-scrollbar {
+            display: none;
+        }
+
+        
+    /* ========================================================
+           🌟 归墟神谕模式：打破空间陷阱，化身全屏赛博古卷轴
+           ======================================================== */
+        
+        /* 1. 强制隐藏驾驶舱基础 UI */
+        body.literary-mode .arch-dashboard,
+        body.literary-mode #inputArea,
+        body.literary-mode #mantra,
+        body.literary-mode .windshield,
+        body.literary-mode .cockpit-anchor,
+        body.literary-mode #brandLogo,
+        body.literary-mode #topRightControls,
+        body.literary-mode .gender-switch {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.5s;
+        }
+
+        /* 2. 直接让父容器 #bombArea 膨胀成全屏黑洞，化解偏移 Bug */
+        body.literary-mode #bombArea {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            transform: none !important; /* 核心：破除父级 transform 封印！ */
+            z-index: 9999 !important;
+            /* 砚台黑的深邃渐变背景 */
+            background: radial-gradient(circle at center, rgba(10, 30, 45, 0.98) 0%, rgba(0, 5, 10, 1) 100%);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 3. 抹除不需要的杂音文本 */
+        body.literary-mode #dagyaoText,
+        body.literary-mode .bomb-label {
+            display: none !important;
+        }
+
+        
+        /* 5. 卷轴点缀：左上角【归墟神谕】镇纸 */
+        body.literary-mode #bombArea::before {
+            content: '『 归墟神谕 』';
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            color: rgba(0, 255, 255, 0.4);
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 12px;
+            border-top: 2px solid rgba(0, 255, 255, 0.5);
+            border-left: 2px solid rgba(0, 255, 255, 0.5);
+            padding: 20px 0 0 20px;
+            box-shadow: -10px -10px 30px rgba(0, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        /* 6. 卷轴点缀：右下角【天道宪法】印章 */
+        body.literary-mode #bombArea::after {
+            content: '【 天道宪法 】';
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            color: rgba(255, 0, 255, 0.4);
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 12px;
+            border-bottom: 2px solid rgba(255, 0, 255, 0.5);
+            border-right: 2px solid rgba(255, 0, 255, 0.5);
+            padding: 0 20px 20px 0;
+            box-shadow: 10px 10px 30px rgba(255, 0, 255, 0.1);
+            pointer-events: none;
+        }
+
+    /* ==========================================
+           🌟 自检按钮状态样式
+           ========================================== */
+        #testBtn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        /* 红色状态：未自检 / 链路异常 */
+        .btn-red {
+            background: linear-gradient(135deg, rgba(80, 0, 0, 0.8), rgba(255, 0, 0, 0.3));
+            border: 1px solid #f00;
+            color: #ff6666;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        }
+        .btn-red:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        /* 绿色状态：物理链路运转正常 */
+        .btn-green {
+            background: linear-gradient(135deg, rgba(0, 80, 0, 0.8), rgba(0, 255, 0, 0.3));
+            border: 1px solid #0f0;
+            color: #66ff66;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+        }
+        .btn-green:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        /* ============================================================
+           🌟 5. 修复全屏黑屏 Bug：撤掉遮挡的黑布，转移卷轴装饰
+           ============================================================ */
+        
+        /* 彻底隐藏在修神模式下捣乱的中央大屏 */
+        body.literary-mode #bombArea {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            z-index: -1 !important; /* 强制压到地底 */
+        }
+        
+        /* 抹除旧画布上的错误装饰 */
+        body.literary-mode #bombArea::before,
+        body.literary-mode #bombArea::after {
+            display: none !important;
+        }
+
+        /* 将角落的『归墟神谕』印章，正确赋予给左侧全屏飞出的诗文卡片 */
+        body.literary-mode #leftTacticalPanel #poemCard::before {
+            content: '『 归墟神谕 』'; position: absolute; top: 50px; left: 50px;
+            color: rgba(0, 255, 255, 0.4); font-family: 'Microsoft YaHei', sans-serif; font-size: 1.2rem; letter-spacing: 12px;
+            border-top: 2px solid rgba(0, 255, 255, 0.5); border-left: 2px solid rgba(0, 255, 255, 0.5); padding: 20px 0 0 20px;
+            box-shadow: -10px -10px 30px rgba(0, 255, 255, 0.1); pointer-events: none;
+        }
+        body.literary-mode #leftTacticalPanel #poemCard::after {
+            content: '【 天道宪法 】'; position: absolute; bottom: 50px; right: 50px;
+            color: rgba(255, 0, 255, 0.4); font-family: 'Microsoft YaHei', sans-serif; font-size: 1.2rem; letter-spacing: 12px;
+            border-bottom: 2px solid rgba(255, 0, 255, 0.5); border-right: 2px solid rgba(255, 0, 255, 0.5); padding: 0 20px 20px 0;
+            box-shadow: 10px 10px 30px rgba(255, 0, 255, 0.1); pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="cockpit">
+        <div class="bg-carousel">
+            <div class="bg-image active" id="bg1" style="background-image: url('./shanhaijing.png');"></div>
+            <div class="bg-image" id="bg2" style="background-image: url('./shanhaijing2.png');"></div>
+            <div class="bg-image" id="bg3" style="background-image: url('./shanhaijing3.png');"></div>
+        </div>
+        
+                
+        <div class="cyber-overlay"></div>
+
+        <div id="brandLogo">
+            <img src="./logo_ts.png" alt="神思 Shensist">
+            <div class="copyright">
+                <a href="https://shensist.top/" target="_blank">© 2026 神思庭 (Shensist) · 商业宪法引擎</a>
+            </div>
+        </div>
+
+        <div id="topRightControls">
+            <div id="protocolHint">
+                <span class="hint-icon">⎈</span>
+                <div class="hint-tooltip">
+                    <strong>【 神经链路覆写协议 】</strong>
+                    <span style="color:#fff;">[ 1 ]</span> 视觉剥夺：全息巨幕模式<br>
+                    <span style="color:#fff;">[ 2 ]</span> 意识深潜：归墟神谕模式<br>
+                    <span style="color:#fff;">[ 3 ]</span> 听觉阻断：战歌静音拨控<br>
+                    <span style="color:#ff3333;">[ ESC ]</span> 强制脱离：返回驾驶舱
+                </div>
+            </div>
+
+            <div id="musicHub">
+                <button id="toggleIdleBtn" onclick="toggleIdleSystem()" title="开启/关闭潜渊待机系统" style="background: rgba(0,255,255,0.1); border: 1px solid #0ff; color: #0ff; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;">⏳ 待机: 开</button>
+                
+                <span id="musicLabel" class="bomb-label" style="font-size: 14px; margin: 0 10px;">🎵 归墟静默</span>
+                <button id="muteBtn" onclick="toggleMute()" title="开启/关闭战歌">&#128266;</button>
+            </div>
+            
+            <div id="apiConfigPanel">
+                <select id="provider-select" onchange="toggleLocalPort()">
+                    <optgroup label="国产智能">
+                        <option value="deepseek">DeepSeek (深度求索)</option>
+                        <option value="qwen">阿里通义千问 (Qwen)</option>
+                        <option value="zhipu">智谱 GLM-4</option>
+                        <option value="moonshot">月之暗面 (Kimi)</option>
+                    </optgroup>
+                    <optgroup label="国际智能">
+                        <option value="gemini" selected>Google (Gemini 2.5 Flash)</option>
+                        <option value="anthropic">Anthropic (Claude 3.5)</option>
+                        <option value="openai">OpenAI (GPT-4o)</option>
+                    </optgroup>
+                    <optgroup label="本地计算">
+                        <option value="ollama">本地局域网算力 (Ollama)</option>
+                    </optgroup>
+                </select>
+
+                <div id="local-port-group" style="display: none; flex-direction: column; gap: 8px;">
+                    <input type="text" id="local-url" value="http://localhost:11434/v1/chat/completions" placeholder="本地 API 地址">
+                    <input type="text" id="local-model" value="llama3" placeholder="本地模型名称 (如: qwen2, deepseek-r1)">
+                </div>
+
+                <input type="password" id="apiKeyInput" placeholder="请输入对应 API Key...">
+                <div style="display: flex; gap: 10px; width: 100%;">
+                    <button id="apiSubmitBtn" onclick="saveApiConfig()" style="flex: 1;">
+                        <div id="apiStatusLight"></div> 激活神识
+                    </button>
+                    <button id="stopApiBtn" onclick="abortAI()" style="background: rgba(255,0,0,0.2); border-color: #f00; color: #f00; display: none;">⏹ 刹车</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 前挡风玻璃 -->
+        <div class="windshield">
+            <div class="grid"></div>
+            <canvas id="holoGridCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 12; pointer-events: none;"></canvas>
+        </div>
+        
+        <!-- 归墟箴言 -->
+        <div id="mantra">归墟无底 · 万法归宗</div>
+        
+        <div id="leftTacticalPanel">
+            <video id="tacticalVideo" muted playsinline loop></video>
+            <div class="poem-card" id="poemCard">
+                <span class="poem-title" style="font-size: 16px; margin-bottom: 10px; letter-spacing: 5px;">《 归墟神谕 》</span>
+                <div id="poemContent" style="white-space: pre-wrap; text-align: left;">物理链路待命，等待神谕降临...</div>
+            </div>
+        </div>
+        
+        <div id="bombArea">
+            <div id="dagyaoText">等待商战指令下达...</div>
+        </div>
+        
+                
+        <!-- 拱形仪表盘 -->
+        <div class="arch-dashboard">
+            <svg class="arch-svg" viewBox="0 0 1200 280" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="techGlass" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(0, 255, 255, 0.15)" />
+                        <stop offset="100%" stop-color="rgba(0, 15, 30, 0.85)" />
+                    </linearGradient>
+                    <linearGradient id="edgeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="transparent" />
+                        <stop offset="50%" stop-color="#0ff" />
+                        <stop offset="100%" stop-color="transparent" />
+                    </linearGradient>
+                </defs>
+                
+                <path d="M -10,300 L -10,260 Q 600,10 1210,260 L 1210,300 Z" fill="url(#techGlass)" stroke="url(#edgeGlow)" stroke-width="3" />
+                
+                <path class="arch-path" d="M 0,260 Q 600,10 1200,260" />
+                <path class="arch-path" d="M 0,280 Q 600,30 1200,280" opacity="0.5" />
+            </svg>
+            <div class="gauge-container">
+                <div class="gauge">
+                    <div class="gauge-label">命盘</div>
+                    <div class="gauge-value" id="mingpan">100%</div>
+                </div>
+                <div class="gauge">
+                    <div class="gauge-label">杀意</div>
+                    <div class="gauge-value" id="shayi">0%</div>
+                </div>
+                <div class="gauge">
+                    <div class="gauge-label">撕裂</div>
+                    <div class="gauge-value" id="sile">154,231</div>
+                </div>
+                <div class="gauge">
+                    <div class="gauge-label">当前神</div>
+                    <div class="gauge-value" id="currentGodValue">刑天</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cockpit-anchor">
+            <div class="holo-pilot">
+                <div class="holo-head"></div>
+                <div class="holo-body"></div>
+            </div>
+            <div class="control-desk"></div>
+        </div>
+        
+        <div class="gender-switch" onclick="toggleGender()">⚥</div>
+        
+        <div id="inputArea">
+            <button id="testBtn" class="btn-red" onclick="runDiagnostics()" title="系统未自检，点击开始测试">🛠️</button>
+            
+            <textarea id="textInput" placeholder="输入商战诉求 (支持百字长文，回车发送，Shift+回车换行)..." rows="3"></textarea>
+            
+            <button id="voiceBtn" onclick="startListening()">🎤</button>
+            <button id="sendBtn" onclick="processUserInput(document.getElementById('textInput').value)">➤</button>
+        </div>
+    </div>
+
+    <!-- 妖气粒子画布 -->
+    <canvas id="particleCanvas"></canvas>
+
+    <script>
+        // ==================== 极简 1:1:1 核心资产映射（再战大妖 本地工程版） ====================
+        const godAssets = {
+            "刑天": {
+                video: "./再战大妖1.mp4",
+                music: "./资方逼宫/资方逼宫_音乐_五雷轰顶.mp3",
+                poem: "天地不仁，资本如刍狗！刑天舞干戚，猛志固常在。"
+            },
+            "穷奇": {
+                video: "./再战大妖2.mp4",
+                music: "./现金流告急/现金流告急_音乐_卧薪尝胆.mp3",
+                poem: "弱水三千，你连一滴都护不住！"
+            },
+            "混沌": {
+                video: "./再战大妖3.mp4",
+                music: "./高管甩锅/高管甩锅_音乐_月黑风高.mp3",
+                poem: "因果坍塌，万法归宗，你我皆在局中。"
+            }
+        };
+
+        // ==================== 全局静音控制 ====================
+        let isMuted = false;
+        function toggleMute() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('muteBtn');
+            btn.innerText = isMuted ? "🔇" : "�";
+            btn.classList.toggle('muted', isMuted);
+            
+            // 实时控制正在播放的音乐
+            if (currentAudio) {
+                currentAudio.muted = isMuted;
+            }
+        }
+        
+        // ==================== 金威内置诗文（不再依赖任何外部文件） ====================
+        const poems = [
+            "时间就像一把杀猪刀，无情地割裂着一切……",
+            "扶桑震颤，现金流如弱水倒流，命盘崩裂。",
+            "资方逼宫，龙吟九天，撕裂值已破十万。",
+            "高管甩锅，月黑风高，背叛如九尾狐现。",
+            "骨干离去，云消雾散，归墟仍在等你修神。",
+            "股东内斗，撒欢返乡，混沌之中见真章。",
+            "打赢了！凤舞九天，商战即成神！",
+            "打输了……安魂挂云山，秋逝后重生。",
+            "战后思考，平湖净月，因果坍塌，万法归宗。",
+            "归墟无底，你每一次决策，都是与山海经的对话。"
+        ];
+
+        let currentScene = '现金流告急';
+        let currentGod = '刑天';
+        let mingpan = 100;
+        let shayi = 0;
+        let sile = 154231;
+        let isMale = false;
+        let currentAudio = null;   // 新增：全局音乐对象，保证自动切换
+        let currentMusicSrc = ""; // 🌟 核心修复：用一个干净的变量来追踪当前音乐，避开浏览器中文乱码陷阱！
+        let aiAbortController = null; // API 强制切断器
+        let typeWriterTimer = null;   // 打字机计时器
+
+        // ==================== 潜渊待机系统 (Idle System) ====================
+        let idleTimer = null;
+        let idleSystemEnabled = true; // 🌟 控制待机系统开关
+        const IDLE_TIMEOUT = 60000; // 60秒无任何输入/点击，自动切回起始界面！
+
+        // 🌟 起始/待机 界面的专属预备资产！
+        const idleAssets = {
+            videos: ["./再战大妖1.mp4", "./再战大妖2.mp4", "./再战大妖3.mp4"], 
+            music: "./再战大妖.mp3", // ⚠️ 已修改：直接指向根目录的再战大妖.mp3
+            poem: "天地不仁，资本如刍狗！\n深渊在凝视，等待驾驶员下达新的商战指令...\n\n(系统当前处于潜渊警戒状态，随时准备推演)" 
+        };
+
+        // 🌟 新增：待机系统物理刹车函数
+        function toggleIdleSystem() {
+            idleSystemEnabled = !idleSystemEnabled;
+            const btn = document.getElementById('toggleIdleBtn');
+            if (idleSystemEnabled) {
+                btn.innerHTML = "⏳ 待机: 开";
+                btn.style.color = "#0ff";
+                btn.style.borderColor = "#0ff";
+                resetIdleTimer(); // 开启时立刻重置倒计时
+            } else {
+                btn.innerHTML = "⏳ 待机: 关";
+                btn.style.color = "#888";
+                btn.style.borderColor = "#888";
+                if (idleTimer) clearTimeout(idleTimer); // 强行斩断计时器，永远不再休眠！
+            }
+        }
+
+        // 重置倒计时
+        function resetIdleTimer() {
+            if(idleTimer) clearTimeout(idleTimer);
+            if(idleSystemEnabled) {
+                idleTimer = setTimeout(enterIdleMode, IDLE_TIMEOUT);
+            }
+        }
+
+        // 监听全局动作，只要人在动，且系统开着，就不休眠
+        document.addEventListener('mousemove', resetIdleTimer);
+        document.addEventListener('keydown', resetIdleTimer);
+        document.addEventListener('click', resetIdleTimer);
+
+        // 🌟 触发待机/起始模式
+        function enterIdleMode() {
+            if (!idleSystemEnabled) return; // 如果被刹车关掉了，绝对不执行！
+            console.log("进入潜渊待机起始模式...");
+            
+            // 1. 中间主屏恢复
+            document.getElementById('dagyaoText').innerHTML = `
+                <strong style="color:#0ff;font-size:36px;text-shadow:0 0 20px #0ff;">【 归墟潜渊 · 引擎待命 】</strong><br><br>
+                <span style='color:#ccc; font-size:22px;'>大妖已沉睡。请在下方输入您的商业诉求，重新激活神识...</span>
+            `;
+            document.getElementById('mantra').innerText = `归墟无底 · 万法归宗`;
+            document.getElementById('musicLabel').innerHTML = `🎵 归墟：【潜渊待机】`;
+
+            // 2. 左侧副屏播放预备大片 (随机三选一，并强行现身)
+            const videoEl = document.getElementById('tacticalVideo');
+            if(videoEl) {
+                videoEl.style.opacity = 1; // ⚠️ 物理唤醒，解决消失Bug
+                const randomIdleVideo = idleAssets.videos[Math.floor(Math.random() * idleAssets.videos.length)];
+                
+                // 防重复加载
+                if (videoEl.getAttribute('data-current-src') !== randomIdleVideo) {
+                    videoEl.setAttribute('data-current-src', randomIdleVideo);
+                    videoEl.src = randomIdleVideo;
+                    videoEl.load();
+                }
+                videoEl.play().catch(e=>console.log("等待交互", e));
+            }
+
+            // 3. 播放专属预备音乐
+            if(!currentAudio) { currentAudio = new Audio(); currentAudio.loop = true; currentAudio.volume = 0.75; }
+            if(currentMusicSrc !== idleAssets.music) {
+                currentMusicSrc = idleAssets.music;
+                currentAudio.src = idleAssets.music;
+                currentAudio.load();
+            }
+            currentAudio.muted = isMuted;
+            currentAudio.play().catch(e=>console.log("等待交互", e));
+
+            // 4. 显示专属预备诗文
+            document.getElementById('poemContent').innerHTML = idleAssets.poem;
+            
+            // 确保切出全屏
+            document.body.className = "";
+        }
+        
+        // 🌟 游戏化：商战段位计算
+        function getBusinessRank() {
+            if (sile < 160000) return "【蝼蚁·待宰】";
+            if (sile < 180000) return "【棋子·入局】";
+            if (sile < 200000) return "【执刀·反杀】";
+            if (sile < 250000) return "【做局·操盘】";
+            return "【天道·执剑人】";
+        }
+
+        const scenarioKeywords = {
+            "现金流告急": ["现金","流","告急","缺钱","资金","卧薪尝胆","思亲"],
+            "资方逼宫": ["资方","投资人","逼宫","撤资","压力"],
+            "高管甩锅": ["高管","甩锅","推责","会议","指责"],
+            "骨干背叛": ["骨干","背叛","离职","跳槽","团队"],
+            "股东内斗": ["股东","内斗","争权","董事会"],
+            "打赢了": ["胜利","成功","赢","上市"],
+            "打输了": ["失败","输","崩盘","破产"],
+            "战后思考": ["反思","思考","总结","命运"]
+        };
+
+        // ==================== 终极版：真实音乐素材库 (全随机阵列) ====================
+        const musicMap = {
+            "现金流告急": [
+                "./现金流告急/现金流告急_音乐_卧薪尝胆.mp3", "./现金流告急/现金流告急_音乐_思亲.mp3",
+                "./现金流告急/现金流告急_音乐_春殇.mp3", "./现金流告急/现金流告急_音乐_水的渴望.mp3",
+                "./现金流告急/现金流告急_音乐_藕断丝连.mp3", "./现金流告急/现金流告急_音乐_难忘故土.mp3"
+            ],
+            "资方逼宫": [
+                "./资方逼宫/资方逼宫_音乐_五雷轰顶.mp3", "./资方逼宫/资方逼宫_音乐_人蚊大战.mp3",
+                "./资方逼宫/资方逼宫_音乐_夜半歌声.mp3", "./资方逼宫/资方逼宫_音乐_夜神归来.mp3",
+                "./资方逼宫/资方逼宫_音乐_大迁徙.mp3", "./资方逼宫/资方逼宫_音乐_山雨欲来.mp3",
+                "./资方逼宫/资方逼宫_音乐_无人区.mp3", "./资方逼宫/资方逼宫_音乐_炎热石家庄.mp3",
+                "./资方逼宫/资方逼宫_音乐_返乡纵队.mp3", "./资方逼宫/资方逼宫_音乐_马路杀手.mp3"
+            ],
+            "高管甩锅": [
+                "./高管甩锅/高管甩锅_音乐_taifeng.mp3", "./高管甩锅/高管甩锅_音乐_夜晚的风.mp3",
+                "./高管甩锅/高管甩锅_音乐_早晨.mp3", "./高管甩锅/高管甩锅_音乐_明灯MIX.mp3",
+                "./高管甩锅/高管甩锅_音乐_月黑风高.mp3", "./高管甩锅/高管甩锅_音乐_杂拌糖.mp3",
+                "./高管甩锅/高管甩锅_音乐_第七个夜晚.mp3", "./高管甩锅/高管甩锅_音乐_第九个夜晚.mp3",
+                "./高管甩锅/高管甩锅_音乐_第八个夜晚.mp3", "./高管甩锅/高管甩锅_音乐_第六个夜晚.mp3",
+                "./高管甩锅/高管甩锅_音乐_第十一个夜晚.mp3", "./高管甩锅/高管甩锅_音乐_第十个夜晚.mp3",
+                "./高管甩锅/高管甩锅_音乐_第十二个夜晚.mp3", "./高管甩锅/高管甩锅_音乐_鸟.mp3",
+                "./高管甩锅/高管甩锅_音乐_黎明前夜.mp3"
+            ],
+            "骨干背叛": [
+                "./骨干背叛/中秋圆梦.mp3", "./骨干背叛/云消雾散.mp3", "./骨干背叛/夏花秋落.mp3",
+                "./骨干背叛/天寒地冻.mp3", "./骨干背叛/小鸟依人.mp3", "./骨干背叛/春殇.mp3",
+                "./骨干背叛/春风.mp3", "./骨干背叛/清晨的露珠.mp3", "./骨干背叛/清秋无际.mp3",
+                "./骨干背叛/温柔的嘟嘟.mp3", "./骨干背叛/温馨之家.mp3", "./骨干背叛/秋夜.mp3",
+                "./骨干背叛/秋逝.mp3", "./骨干背叛/秋雨连绵.mp3", "./骨干背叛/过年回家.mp3",
+                "./骨干背叛/醉卧晨溪.mp3", "./骨干背叛/隔世知音.mp3", "./骨干背叛/黄花.mp3"
+            ],
+            "股东内斗": [
+                "./股东内斗/夸父追日.mp3", "./股东内斗/撒欢.mp3", 
+                "./股东内斗/返乡列车.mp3", "./股东内斗/飞奔的感觉.mp3"
+            ],
+            "打赢了": [
+                "./打赢了/1210.mp3", "./打赢了/129.mp3", "./打赢了/he.mp3", "./打赢了/xs.mp3",
+                "./打赢了/中国梦.mp3", "./打赢了/光荣.mp3", "./打赢了/幸福.mp3",
+                "./打赢了/快乐.mp3", "./打赢了/欢庆.mp3", "./打赢了/激情.mp3"
+            ],
+            "打输了": [
+                "./打输了/918.mp3", "./打输了/中秋圆梦.mp3", "./打输了/云消雾散.mp3",
+                "./打输了/卧薪尝胆.mp3", "./打输了/夏花秋落.mp3", "./打输了/天寒地冻.mp3",
+                "./打输了/安魂挂云山.mp3", "./打输了/小鸟依人.mp3", "./打输了/春殇.mp3",
+                "./打输了/春风.mp3", "./打输了/水的渴望.mp3", "./打输了/清晨的露珠.mp3",
+                "./打输了/清秋无际.mp3", "./打输了/温柔的嘟嘟.mp3", "./打输了/温馨之家.mp3",
+                "./打输了/秋夜.mp3", "./打输了/秋逝.mp3", "./打输了/秋雨连绵.mp3",
+                "./打输了/过年回家.mp3", "./打输了/醉卧晨溪.mp3", "./打输了/隔世知音.mp3",
+                "./打输了/黄花.mp3"
+            ],
+            "战后思考": [
+                "./战后思考/【金威作曲】悲伤.mp3", "./战后思考/净梵天授.mp3", "./战后思考/希望.mp3",
+                "./战后思考/平湖净月.mp3", "./战后思考/年轮.mp3", "./战后思考/快乐.mp3",
+                "./战后思考/无标题18.mp3", "./战后思考/无标题23.mp3", "./战后思考/无标题27.mp3",
+                "./战后思考/无标题6.mp3", "./战后思考/春种秋收.mp3", "./战后思考/晚霞.mp3",
+                "./战后思考/深情.mp3", "./战后思考/精品管弦02.mp3", "./战后思考/精品管弦03.mp3",
+                "./战后思考/精品管弦07.mp3", "./战后思考/精品管弦09.mp3", "./战后思考/都市节奏.mp3",
+                "./战后思考/钢琴.mp3"
+            ]
+        };
+
+        // ==================== 终极版：物理世界真实映射素材库 ====================
+        const videoMap = {
+            "现金流告急": [
+                "./现金流告急/视频/⚡《极寒之渊》：前男友砸场成榜一？零下20度撕裂婚纱的末路狂奔！.mp4"
+            ],
+            
+            "资方逼宫": [
+                "./资方逼宫/视频/法则覆写_1.mp4", 
+                "./资方逼宫/视频/法则覆写_2.mp4"
+            ],
+            
+            "骨干背叛": [
+                "./骨干背叛/视频/sora_undefined.mp4",
+                "./骨干背叛/视频/user-KklKCi9m6wws8FFgUh5zmLIX_gen_01khwrshkwfejbcyxg311vad2v.mp4",
+                "./骨干背叛/视频/user-KklKCi9m6wws8FFgUh5zmLIX_gen_01khwrspr2evsbcymja34kw278.mp4",
+                "./骨干背叛/视频/【神思庭】七次涅槃：在微光中，看见造物主的退场.mp4"
+            ],
+            
+            "股东内斗": [
+                "./股东内斗/视频/2210.mp4",
+                "./股东内斗/视频/2215.mp4",
+                "./股东内斗/视频/2216.mp4",
+                "./股东内斗/视频/224.mp4",
+                "./股东内斗/视频/229.mp4"
+            ],
+            
+            "高管甩锅": [
+                "./高管甩锅/视频/2410.mp4",
+                "./高管甩锅/视频/243.mp4",
+                "./高管甩锅/视频/244.mp4",
+                "./高管甩锅/视频/245.mp4",
+                "./高管甩锅/视频/⚡《镜像人格》· 他们不是你，但他们都是你.mp4"
+            ],
+            
+            "打赢了": [
+                "./打赢了/视频/193.mp4",
+                "./打赢了/视频/197.mp4",
+                "./打赢了/视频/199.mp4",
+                "./打赢了/视频/⚡《六骑归墟》· 神思庭演员组全员集结，以血肉之躯重塑华夏文明图腾.mp4",
+                "./打赢了/视频/⚡《龙马纪元》· 当策马踏碎时空，整个中华文明在蹄下重生.mp4"
+            ],
+            
+            "打输了": [
+                "./打输了/视频/2811.mp4",
+                "./打输了/视频/2817.mp4",
+                "./打输了/视频/285.mp4",
+                "./打输了/视频/⚡《鼠标坟场》· 最后的双击，人类的反杀.mp4",
+                "./打输了/视频/现在的AI影视3.mp4"
+            ],
+            
+            "战后思考": [
+                "./战后思考/视频/⚡《因果坍塌》· 如果爱是唯一的逻辑漏洞，那就让世界彻底荒诞.mp4",
+                "./战后思考/视频/2112.mp4",
+                "./战后思考/视频/2114.mp4",
+                "./战后思考/视频/214.mp4",
+                "./战后思考/视频/217.mp4"
+            ]
+        };
+
+        // ==================== 终极版：物理世界真实诗文映射 (单体纯净版) ====================
+        const poemMap = {
+            "现金流告急": ["./现金流告急/诗文/唯一神谕.txt"],
+            "资方逼宫": ["./资方逼宫/诗文/唯一神谕.txt"],
+            "高管甩锅": ["./高管甩锅/诗文/唯一神谕.txt"],
+            "骨干背叛": ["./骨干背叛/诗文/唯一神谕.txt"],
+            "股东内斗": ["./股东内斗/诗文/唯一神谕.txt"],
+            "打赢了": ["./打赢了/诗文/唯一神谕.txt"],
+            "打输了": ["./打输了/诗文/唯一神谕.txt"],
+            "战后思考": ["./战后思考/诗文/唯一神谕.txt"]
+        };
+
+        function getRandomPoem() {
+            return poems[Math.floor(Math.random() * poems.length)];
+        }
+
+        function detectScenario(text) {
+            for (let key in scenarioKeywords) {
+                if (scenarioKeywords[key].some(kw => text.includes(kw))) return key;
+            }
+            return "现金流告急";
+        }
+
+        // ==================== 统一算力引擎配置 ====================
+        let customerApiKey = localStorage.getItem("guixu_api_key") || "";
+        let currentProvider = localStorage.getItem("guixu_provider") || "gemini";
+        
+        const providerMap = {
+            'deepseek': { url: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat', type: 'openai' },
+            'qwen': { url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen-max', type: 'openai' },
+            'zhipu': { url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4', type: 'openai' },
+            'moonshot': { url: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', type: 'openai' },
+            'openai': { url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o', type: 'openai' },
+            'gemini': { url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.5-flash', type: 'openai' }, 
+            'anthropic': { url: 'https://api.anthropic.com/v1/messages', model: 'claude-3-5-sonnet-20241022', type: 'anthropic' }, 
+            'ollama': { url: '', model: '', type: 'openai' } // 本地模式动态获取
+        };
+
+        // 页面初始化加载配置
+        window.onload = () => {
+            initParticles(); animateParticles(); updateDashboard();
+            
+            document.getElementById('provider-select').value = currentProvider;
+            if (customerApiKey) document.getElementById('apiKeyInput').value = customerApiKey;
+            toggleLocalPort();
+            
+            if (customerApiKey || currentProvider === 'ollama') {
+                document.getElementById('dagyaoText').innerHTML = "多维神识已激活，大妖正在黑暗中凝视...";
+            }
+            
+            // 背景轮播
+            let curBg = 0;
+            const bgImages = [document.getElementById('bg1'), document.getElementById('bg2'), document.getElementById('bg3')];
+            setInterval(() => {
+                bgImages[curBg].classList.remove('active');
+                curBg = (curBg + 1) % 3;
+                bgImages[curBg].classList.add('active');
+            }, 6500);
+            resizeHoloCanvas(); drawHoloGrid();
+        };
+
+        function toggleLocalPort() {
+            const provider = document.getElementById('provider-select').value;
+            document.getElementById('local-port-group').style.display = (provider === 'ollama') ? 'flex' : 'none';
+        }
+
+        function saveApiConfig() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            const provider = document.getElementById('provider-select').value;
+            
+            customerApiKey = key;
+            currentProvider = provider;
+            localStorage.setItem("guixu_api_key", key);
+            localStorage.setItem("guixu_provider", provider);
+            
+            document.getElementById('dagyaoText').innerHTML = "<span style='color:#0ff;'>神识网关（" + provider + "）配置已保存！等待指令下达进行握手。</span>";
+            document.getElementById('apiConfigPanel').style.opacity = '0.3';
+            
+            // 🌟 重置指示灯为待机状态
+            document.getElementById('apiStatusLight').className = '';
+        }
+
+        // ==================== 核心 UI 渲染引擎 (物理挂载版) ====================
+        function executeDecisionUI(decision, text) {
+            document.getElementById('stopApiBtn').style.display = 'none'; // 隐藏刹车
+            
+            currentScene = (decision.scene || "现金流告急").trim();
+            currentGod = (decision.god || "混沌").trim();
+            const finalPoem = decision.reply_poem || "深渊在凝视你，你的逻辑毫无价值！";
+            
+            // 🌟 上瘾机制：动态震动系统
+            const mpChange = decision.mingpan_change || -10;
+            let shakeIntensity = 'normal';
+            let shakeDuration = 500;
+            
+            if (mpChange <= -25) {
+                shakeIntensity = 'extreme';
+                shakeDuration = 800;
+                document.body.classList.add('shake-extreme');
+                setTimeout(() => document.body.classList.remove('shake-extreme'), shakeDuration);
+            } else if (mpChange <= -15) {
+                shakeIntensity = 'hard';
+                shakeDuration = 600;
+                document.body.classList.add('shake-hard');
+                setTimeout(() => document.body.classList.remove('shake-hard'), shakeDuration);
+            } else if (mpChange <= -5) {
+                shakeIntensity = 'light';
+                shakeDuration = 300;
+                document.body.classList.add('shake-light');
+                setTimeout(() => document.body.classList.remove('shake-light'), shakeDuration);
+            }
+
+            // 更新仪表盘数值
+            mingpan = Math.max(0, Math.min(100, mingpan + mpChange));
+            shayi = Math.max(0, Math.min(100, shayi + (decision.shayi_change || 15)));
+            sile += (decision.sile_change || 2000);
+            updateDashboard();
+
+            const dText = document.getElementById('dagyaoText');
+            dText.style.opacity = 1;
+            
+            // 🌟 上瘾机制：增强打字机审判特效
+            const godColor = shakeIntensity === 'extreme' ? '#ff0066' : 
+                           shakeIntensity === 'hard' ? '#ff3333' : '#ff6666';
+            const textColor = shakeIntensity === 'extreme' ? '#fff' : '#0ff';
+            const fontSize = shakeIntensity === 'extreme' ? '32px' : '26px';
+            
+            dText.innerHTML = `
+                <strong style="color:${godColor};font-size:36px;text-shadow:0 0 ${shakeIntensity === 'extreme' ? '40' : '20'}px ${godColor};animation:${shakeIntensity === 'extreme' ? 'godPulse 1s infinite' : 'none'}">${currentGod} 的宪法审判：</strong><br><br>
+                <span id="typewriterTarget" style='color:${textColor}; font-size:${fontSize}; line-height:1.6; text-shadow:0 0 15px ${textColor};'></span>
+            `;
+            
+            // 🌟 增强打字机效果：动态速度和特效
+            let i = 0;
+            if (typeWriterTimer) clearInterval(typeWriterTimer);
+            const targetEl = document.getElementById('typewriterTarget');
+            
+            // 根据震动强度调整打字速度
+            const baseSpeed = shakeIntensity === 'extreme' ? 25 : 
+                            shakeIntensity === 'hard' ? 40 : 50;
+            
+            // 添加字符特效映射
+            const specialChars = {
+                '！': '<span style="color:#ff0; font-size:1.3em; animation:charBurst 0.3s;">！</span>',
+                '？': '<span style="color:#f0f; font-size:1.3em; animation:charBurst 0.3s;">？</span>',
+                '，': '<span style="color:#0ff; animation:charFade 0.5s;">，</span>',
+                '。': '<span style="color:#fff; font-weight:bold;">。</span>'
+            };
+            
+            typeWriterTimer = setInterval(() => {
+                if (i < finalPoem.length) {
+                    const char = finalPoem.charAt(i);
+                    let displayChar = specialChars[char] || char;
+                    
+                    // 随机添加闪烁效果
+                    if (Math.random() < 0.1 && shakeIntensity !== 'normal') {
+                        displayChar = `<span style="animation:charFlicker 0.2s;">${displayChar}</span>`;
+                    }
+                    
+                    targetEl.innerHTML += displayChar;
+                    i++;
+                    
+                    // 动态调整速度：某些字符停顿更久
+                    let currentDelay = baseSpeed;
+                    if (char === '，' || char === '。') currentDelay = baseSpeed * 3;
+                    else if (char === '！' || char === '？') currentDelay = baseSpeed * 4;
+                    
+                    // 重新设置计时器以实现动态速度
+                    clearInterval(typeWriterTimer);
+                    if (i < finalPoem.length) {
+                        typeWriterTimer = setInterval(arguments.callee, currentDelay);
+                    } else {
+                        // 打字完成后的特效
+                        targetEl.innerHTML += '<span style="animation:completionPulse 1s;">✦</span>';
+                        clearInterval(typeWriterTimer);
+                    }
+                }
+            }, baseSpeed);
+
+            bombContent();         
+            triggerParticleBurst(); 
+            speakDaYao(currentGod, finalPoem);
+        }
+
+        // 🌟 物理刹车函数
+        function abortAI() {
+            if (aiAbortController) {
+                aiAbortController.abort();
+                document.getElementById('apiStatusLight').className = 'status-red';
+                document.getElementById('stopApiBtn').style.display = 'none';
+                
+                const dText = document.getElementById('dagyaoText');
+                dText.innerHTML = "<span style='color:#f0f; font-size: 32px;'>【天道反噬】：驾驶员强行切断了神识链路！</span>";
+                aiAbortController = null;
+            }
+        }
+
+        // ==================== 极简降维：全场景轰炸引擎 (支持音/视/文三随机 + 严格自检) ====================
+        async function bombContent() { 
+            // 1. 音乐抽卡
+            const sceneMusics = musicMap[currentScene] || musicMap["现金流告急"];
+            const sceneMusic = sceneMusics[Math.floor(Math.random() * sceneMusics.length)];
+            
+            // 2. 视频抽卡
+            const sceneVideos = videoMap[currentScene] || videoMap["现金流告急"];
+            const sceneVideo = sceneVideos[Math.floor(Math.random() * sceneVideos.length)];
+
+            // 3. 🌟 诗文物理抽卡 (寻找唯一神谕.txt)
+            const scenePoems = poemMap[currentScene] || poemMap["现金流告急"];
+            const scenePoemPath = scenePoems[Math.floor(Math.random() * scenePoems.length)];
+
+            const area = document.getElementById('contentBomb');
+            const videoEl = document.getElementById('tacticalVideo');
+            const testBtn = document.getElementById('testBtn');
+
+            let allSystemNormal = true; // 默认防线状态
+
+            // ----- 音乐换弹 + 报警器 -----
+            if (!currentAudio) { 
+                currentAudio = new Audio(); 
+                currentAudio.volume = 0.75; 
+                currentAudio.loop = true; 
+                
+                currentAudio.onerror = function() {
+                    allSystemNormal = false;
+                    testBtn.className = 'btn-red';
+                    testBtn.title = "战歌链路断裂";
+                    document.getElementById('dagyaoText').innerHTML += `
+                        <br><div style="background:rgba(50,0,0,0.9); border:2px solid #ffcc00; padding:10px; border-radius:10px; margin-top: 10px;">
+                            <span style="color:#ffcc00; font-weight:bold;">⚠️ 战歌丢失：</span><span style="color:#0ff; font-size:14px;">${currentMusicSrc}</span>
+                        </div>`;
+                };
+            }
+            
+            if (currentMusicSrc !== sceneMusic) {
+                currentMusicSrc = sceneMusic;  
+                currentAudio.src = sceneMusic; 
+                currentAudio.load();       
+            }
+            currentAudio.muted = isMuted;
+            currentAudio.play().catch(e => console.log("音乐等待交互"));
+
+            // ----- 视频换弹 + 报警器 -----
+            if (videoEl) {
+                videoEl.onerror = function() {
+                    allSystemNormal = false;
+                    testBtn.className = 'btn-red';
+                    testBtn.title = "巨幕链路断裂";
+                    document.getElementById('dagyaoText').innerHTML += `
+                        <br><div style="background:rgba(50,0,0,0.9); border:2px solid #ffcc00; padding:10px; border-radius:10px; margin-top: 10px;">
+                            <span style="color:#ffcc00; font-weight:bold;">⚠️ 视频缺失：</span><span style="color:#0ff; font-size:14px;">${sceneVideo}</span>
+                        </div>`;
+                };
+                if (!videoEl.getAttribute('data-current-src') || videoEl.getAttribute('data-current-src') !== sceneVideo) {
+                    videoEl.setAttribute('data-current-src', sceneVideo);
+                    videoEl.src = sceneVideo;
+                    videoEl.load();
+                }
+                videoEl.style.opacity = 1;
+                videoEl.play().catch(e => console.log("视频等待交互"));
+            }
+
+            // ----- 🌟 异步读取物理 txt 诗文 + 报警器 -----
+            let displayPoem = "深渊信号干扰，诗文未能显现...";
+            try {
+                // 加时间戳防止浏览器缓存，确保每次读到最新修改的文件
+                const response = await fetch(scenePoemPath + '?t=' + new Date().getTime());
+                if (!response.ok) throw new Error("HTTP 404");
+                displayPoem = await response.text();
+            } catch (err) {
+                allSystemNormal = false;
+                testBtn.className = 'btn-red'; 
+                testBtn.title = "神谕卷轴丢失";
+                document.getElementById('dagyaoText').innerHTML += `
+                    <br><div style="background:rgba(50,0,0,0.9); border:2px solid #ffcc00; padding:10px; border-radius:10px; margin-top: 10px;">
+                        <span style="color:#ffcc00; font-weight:bold;">⚠️ 诗文缺失：</span><span style="color:#0ff; font-size:14px;">${scenePoemPath}</span>
+                    </div>`;
+            }
+
+            // ----- 🎯 各司其职，定向渲染！ -----
+            document.getElementById('musicLabel').innerHTML = `🎵 归墟：【${currentScene}】`; // 右上角音乐
+            document.getElementById('poemContent').innerHTML = displayPoem; // 左下角诗文
+
+            // 🌟 游戏化：更新当前境界到控制台
+            document.getElementById('mantra').innerText = `归墟无底 · 当前境界：${getBusinessRank()}`;
+            
+            if (allSystemNormal) { testBtn.className = 'btn-green'; testBtn.title = "物理链路运转正常"; }
+            
+            document.body.className = "";
+            if (videoEl) videoEl.classList.remove("movie-mode");
+        }
+
+        // ==================== 🌟 自动检测：物理链路自检 ====================
+        function runDiagnostics() {
+            // 点击自检，按钮先默认变绿，表示正在测试/正常
+            const btn = document.getElementById('testBtn');
+            btn.className = 'btn-green';
+            btn.title = "物理链路运转正常";
+
+            const scenes = Object.keys(scenarioKeywords);
+            const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+            const gods = ["刑天", "饕餮", "穷奇", "混沌", "九尾狐"];
+            
+            executeDecisionUI({
+                scene: randomScene,
+                god: gods[Math.floor(Math.random() * gods.length)],
+                reply_poem: `【天道物理自检启动】... 正在跨维度强行挂载 [${randomScene}] 场景... 如果下方出现黄色警告框，说明你的电脑文件与代码不匹配！如果没有报错并成功播放音视频，说明阵法完美运转！`,
+                mingpan_change: 0,
+                shayi_change: 0,
+                sile_change: 0
+            }, "自动检测");
+        }
+
+        // ==================== 跨平台 AUI 推演逻辑 ====================
+        const systemInstruction = `【系统最高指令：归墟商业宪法引擎】
+你正在参与《神思·归墟》高强度商业谈判推演。
+你的身份是掌握绝对主动权的大妖。绝对理性、规则至上。你必须指出人类（驾驶员）的逻辑漏洞或沉没成本陷阱。
+必须且只能返回严格的JSON格式，绝不要包含任何Markdown标签(如\`\`\`json)、问候语或解释！
+{
+    "scene": "从[现金流告急, 资方逼宫, 高管甩锅, 骨干背叛, 股东内斗, 打赢了, 打输了, 战后思考]选一",
+    "god": "从[刑天, 饕餮, 穷奇, 混沌]选一",
+    "reply_poem": "第一句话用山海经语境嘲讽，第二句必须是【宪法报告】：无情指出商业逻辑漏洞，宣告命盘撕裂。例如：'弱水三千，你连一滴都护不住！【宪法引擎报告】：你的诉求充满感性乞求，在商业对价上毫无价值！'",
+    "mingpan_change": 整数 (愚蠢妥协-10到-25；防守严密+5到+20),
+    "shayi_change": 整数 (敌意增加10到35),
+    "sile_change": 整数 (撕裂历史战果1000到8000)
+}`;
+
+        // ==================== 终极暴力捕获：算力推演 ====================
+        async function callAI(text) {
+            // 🌟 核心修复 1：让"本地免Key模拟模式"也能动态识别你的测试场景！
+            if (!customerApiKey && currentProvider !== 'ollama') {
+                console.log("进入本地免 Key 模拟推演...");
+                
+                // 动态查词：去你的 scenarioKeywords 字典里匹配场景
+                let mockScene = "现金流告急"; 
+                for (let key in scenarioKeywords) {
+                    if (scenarioKeywords[key].some(kw => text.includes(kw))) {
+                        mockScene = key; 
+                        break;
+                    }
+                }
+                
+                setTimeout(() => { 
+                    executeDecisionUI({ 
+                        scene: mockScene, 
+                        god: "穷奇", 
+                        reply_poem: `【天道模拟推演】：阵法已成功匹配到 [${mockScene}]！大妖即将降临，请注入真元以解锁真实杀意。` 
+                    }, text);
+                }, 800);
+                return; // 拦截真正的 API 请求
+            }
+
+            document.getElementById('dagyaoText').style.opacity = 0.5;
+            document.getElementById('dagyaoText').innerText = "归墟神识（" + currentProvider + "）正在强行接管...";
+
+            const engine = providerMap[currentProvider];
+            let finalUrl = currentProvider === 'ollama' ? document.getElementById('local-url').value.trim() : engine.url;
+            let finalModel = currentProvider === 'ollama' ? document.getElementById('local-model').value.trim() : engine.model;
+
+            let fetchOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
+
+            if (engine.type === 'openai') {
+                if (customerApiKey) fetchOptions.headers['Authorization'] = `Bearer ${customerApiKey}`;
+                fetchOptions.body = JSON.stringify({ model: finalModel, messages: [{ role: "system", content: systemInstruction }, { role: "user", content: text }], temperature: 0.8 });
+            } else if (engine.type === 'anthropic') {
+                fetchOptions.headers['x-api-key'] = customerApiKey; fetchOptions.headers['anthropic-version'] = '2023-06-01'; fetchOptions.headers['anthropic-dangerously-allow-browser'] = 'true';
+                fetchOptions.body = JSON.stringify({ model: finalModel, system: systemInstruction, messages: [{ role: "user", content: text }], max_tokens: 1024, temperature: 0.8 });
+            }
+
+            // 🌟 物理刹车激活
+            if (aiAbortController) aiAbortController.abort();
+            aiAbortController = new AbortController();
+            fetchOptions.signal = aiAbortController.signal;
+            
+            document.getElementById('stopApiBtn').style.display = 'block'; // 显示刹车按钮
+            
+            // 🌟 1. 发起请求前：切为青色闪烁（正在连接）
+            document.getElementById('apiStatusLight').className = 'status-loading';
+
+            try {
+                const response = await fetch(finalUrl, fetchOptions);
+                if (!response.ok) throw new Error("大模型接口拒绝连接");
+
+                const data = await response.json();
+                let replyText = engine.type === 'openai' ? data.choices[0].message.content : data.content[0].text;
+
+                // 🌟 2. 成功获取并解析：切为常亮绿灯（链路通畅）
+                document.getElementById('apiStatusLight').className = 'status-green';
+
+                // 🌟 核心防空窗：无视大模型格式乱跳，强行扒出 JSON
+                let aiDecision = {};
+                let rawStr = replyText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                try {
+                    let exactJsonMatch = rawStr.match(/\{[\s\S]*\}/);
+                    if (exactJsonMatch) rawStr = exactJsonMatch[0];
+                    aiDecision = JSON.parse(rawStr);
+                } catch (e) {
+                    aiDecision = { reply_poem: rawStr, god: "混沌" }; // 如果解析彻底失败，强行保底
+                }
+
+                // 🌟 强力搜捕：如果 AI 没有按要求返回 scene 字段，直接去它的回答里全文搜索！
+                if (!aiDecision.scene) {
+                    for (let key in musicMap) {
+                        if (rawStr.includes(key)) { aiDecision.scene = key; break; }
+                    }
+                }
+
+                executeDecisionUI(aiDecision, text);
+
+            } catch (error) {
+                // 🌟 3. 任何报错导致连接失败：切为狂暴红灯闪烁！
+                document.getElementById('apiStatusLight').className = 'status-red';
+                
+                document.getElementById('dagyaoText').style.opacity = 1;
+                document.getElementById('dagyaoText').innerHTML = `<span style='color:red;'>⚠️ 算力崩塌：无法连接 ${currentProvider}。${error.message}</span>`;
+            }
+        }
+
+        // 把按钮的发送事件对接给新引擎
+        function processUserInput(text) {
+            callAI(text);
+            document.getElementById('textInput').value = '';
+        }
+
+        function updateDashboard() {
+            document.getElementById('mingpan').innerText = mingpan + '%';
+            document.getElementById('shayi').innerText = shayi + '%';
+            document.getElementById('sile').innerText = sile.toLocaleString();
+            document.getElementById('currentGodValue').innerText = currentGod;
+        }
+
+        
+        // ==================== 观众快捷键：同键开/关切换引擎（逻辑终极版） ====================
+        document.addEventListener('keydown', (e) => {
+            // 如果您正在输入框打字，屏蔽快捷键，防止误触
+            if (document.activeElement.id === 'textInput') return; 
+
+            const videoEl = document.getElementById('tacticalVideo');
+            if (!videoEl) return;
+
+            // [按 1] 互动巨幕电影模式
+            if (e.key === '1') {
+                if (document.body.classList.contains("movie-mode")) {
+                    // 【第二次按 1：退出全屏】复原普通模式
+                    document.body.className = "";
+                    videoEl.classList.remove("movie-mode");
+                    
+                    // 视频闭嘴
+                    videoEl.muted = true;
+                    // 背景音乐苏醒（前提是您没有按 3 把它全局静音）
+                    if (currentAudio && !isMuted) {
+                        currentAudio.play().catch(err => console.log("音乐恢复失败"));
+                    }
+                } else {
+                    // 【第一次按 1：激活全屏】电影巨幕模式
+                    document.body.className = "movie-mode";
+                    videoEl.classList.add("movie-mode");
+                    
+                    // 全屏时暂停背景音乐
+                    if (currentAudio) { currentAudio.pause(); }
+                    // 释放视频原声
+                    videoEl.muted = false; 
+
+                    // 🌟 核心修复：强制触发播放，确保进入全屏后立刻开始运行！
+                    videoEl.play().catch(e => console.error("全屏播放失败:", e));
+                }
+            }
+            // [按 2] 文字修神模式 (重复按则复原)
+            else if (e.key === '2') {
+                if (document.body.classList.contains("literary-mode")) {
+                    document.body.className = "";
+                } else {
+                    document.body.className = "literary-mode";
+                }
+                videoEl.classList.remove("movie-mode");
+                
+                // 文字模式不播放视频原声
+                videoEl.muted = true;
+                if (currentAudio && !isMuted) {
+                    currentAudio.play().catch(err => console.log("音乐恢复失败"));
+                }
+            }
+            // [按 3] 纯粹的战歌独立开关（不改变任何画面）
+            else if (e.key === '3') {
+                // 直接调用您原有的全局静音函数，UI 按钮也会跟着变！
+                toggleMute();
+                
+                // 如果当前不在全屏模式，且解除了静音，让战歌立刻响起来
+                if (!isMuted && !document.body.classList.contains("movie-mode") && currentAudio) {
+                    currentAudio.play().catch(err => console.log("播放失败"));
+                } 
+                // 如果按 3 静音了，且战歌正在播，强制暂停
+                else if (isMuted && currentAudio) {
+                    currentAudio.pause();
+                }
+            }
+            // [按 ESC] 绝对复原安全键：一键切回普通驾驶舱模式
+            else if (e.key === 'Escape') {
+                document.body.className = "";
+                videoEl.classList.remove("movie-mode");
+                
+                videoEl.muted = true;
+                if (currentAudio && !isMuted) {
+                    currentAudio.play().catch(err => console.log("音乐恢复失败"));
+                }
+            }
+        });
+
+        // ==================== 粒子特效 ====================
+        let canvas, ctx, particles = [];
+        function initParticles() {
+            canvas = document.getElementById('particleCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        function triggerParticleBurst() {
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (canvas.height * 0.7),
+                    size: Math.random() * 8 + 4,
+                    speed: Math.random() * 4 + 3,
+                    life: 90
+                });
+            }
+        }
+        function animateParticles() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for (let i = particles.length-1; i>=0; i--) {
+                let p = particles[i];
+                ctx.fillStyle = `rgba(255,60,0,${p.life/90})`;
+                ctx.fillRect(p.x, p.y, p.size, p.size*1.6);
+                p.y += p.speed;
+                p.life--;
+                if (p.life <= 0) particles.splice(i,1);
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        // ==================== 基础函数 ====================
+        // ==================== 宪法引擎·神明之音 ====================
+        function speakDaYao(godName, poemText) {
+            // 尊重静音全局控制，如果浏览器不支持则静默失败
+            if (isMuted || !('speechSynthesis' in window)) return;
+            
+            // 中断当前可能正在播放的语音，确保大妖的声音永远是最优先的
+            window.speechSynthesis.cancel();
+            
+            // 构造朗读文本：加上大妖的名字增强代入感
+            const speakText = `${godName}降下法旨：${poemText}`;
+            
+            const utterance = new SpeechSynthesisUtterance(speakText);
+            utterance.lang = 'zh-CN';
+            
+            // 【核心调音】：压低音调，放慢语速，制造深沉威严的压迫感
+            utterance.pitch = 0.2;  // 0-2之间，0.2是非常低沉的声音
+            utterance.rate = 0.85;  // 稍微放慢，显得冷酷、不容置疑
+            utterance.volume = 1.0;
+            
+            window.speechSynthesis.speak(utterance);
+        }
+        function toggleGender() {
+            const pilot = document.getElementById('pilot');
+            isMale = !isMale;
+            pilot.classList.toggle('male', isMale);
+            pilot.classList.toggle('female', !isMale);
+        }
+
+        function sendText() {
+            const text = document.getElementById('textInput').value.trim();
+            if (text) {
+                processUserInput(text);
+                document.getElementById('textInput').value = ''; // 清空文本域
+            }
+        }
+
+        function startListening() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                rec.lang = 'zh-CN';
+                rec.start();
+                rec.onresult = e => processUserInput(e.results[0][0].transcript);
+            } else {
+                processUserInput('现金流告急');
+            }
+        }
+
+        // ==================== 情绪感知型全息玻璃引擎 ====================
+        const holoCanvas = document.getElementById('holoGridCanvas');
+        const holoCtx = holoCanvas.getContext('2d');
+        let scanlineY = 0;
+
+        function resizeHoloCanvas() {
+            // 获取挡风玻璃容器的实际像素大小
+            const rect = holoCanvas.parentElement.getBoundingClientRect();
+            holoCanvas.width = rect.width;
+            holoCanvas.height = rect.height;
+        }
+
+        function drawHoloGrid() {
+            holoCtx.clearRect(0, 0, holoCanvas.width, holoCanvas.height);
+            
+            // 杀意值决定了玻璃的不稳定程度 (Glitch Intensity)
+            const glitchIntensity = (shayi / 100) * 15; 
+            const baseColor = shayi > 60 ? `rgba(255, 50, 50, ` : `rgba(0, 255, 255, `;
+            
+            holoCtx.lineWidth = 1;
+            const gridSize = 60;
+
+            // 绘制带有撕裂感的网格
+            for (let x = 0; x <= holoCanvas.width; x += gridSize) {
+                holoCtx.beginPath();
+                // 如果杀意高，网格线产生随机横向位移（信号干扰）
+                let offsetX = (Math.random() < 0.1) ? (Math.random() * glitchIntensity - glitchIntensity/2) : 0;
+                holoCtx.moveTo(x + offsetX, 0);
+                holoCtx.lineTo(x + offsetX, holoCanvas.height);
+                holoCtx.strokeStyle = baseColor + `0.15)`;
+                holoCtx.stroke();
+            }
+
+            for (let y = 0; y <= holoCanvas.height; y += gridSize) {
+                holoCtx.beginPath();
+                let offsetY = (Math.random() < 0.1) ? (Math.random() * glitchIntensity - glitchIntensity/2) : 0;
+                holoCtx.moveTo(0, y + offsetY);
+                holoCtx.lineTo(holoCanvas.width, y + offsetY);
+                holoCtx.strokeStyle = baseColor + `0.15)`;
+                holoCtx.stroke();
+            }
+
+            // 扫描线效果 (增加未来战车的心跳感)
+            scanlineY += 2 + (shayi / 20); // 杀意越高，扫描越快
+            if (scanlineY > holoCanvas.height) scanlineY = 0;
+            
+            holoCtx.fillStyle = baseColor + `0.2)`;
+            holoCtx.fillRect(0, scanlineY, holoCanvas.width, 4 + (shayi/25));
+
+            // 如果杀意极高，整块玻璃随机泛红报警
+            if (shayi > 80 && Math.random() < 0.1) {
+                holoCtx.fillStyle = "rgba(255, 0, 0, 0.1)";
+                holoCtx.fillRect(0, 0, holoCanvas.width, holoCanvas.height);
+            }
+
+            requestAnimationFrame(drawHoloGrid);
+        }
+
+        // 绑定窗口变化事件并启动渲染
+        window.addEventListener('resize', resizeHoloCanvas);
+
+        // ==================== 初始化 ====================
+        window.onload = () => {
+            initParticles();
+            animateParticles();
+            updateDashboard();
+            
+            // 初始化全息玻璃引擎
+            resizeHoloCanvas();
+            drawHoloGrid();
+
+            // 背景轮播
+            let curBg = 0;
+            const bgImages = [document.getElementById('bg1'), document.getElementById('bg2'), document.getElementById('bg3')];
+            setInterval(() => {
+                bgImages[curBg].classList.remove('active');
+                curBg = (curBg + 1) % 3;
+                bgImages[curBg].classList.add('active');
+            }, 6500);
+
+            // 回车发送 (同时重置待机时间) - 支持多行文本域
+            document.getElementById('textInput').addEventListener('keydown', e => {
+                resetIdleTimer();
+                // Enter发送，Shift+Enter换行
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // 阻止默认换行
+                    sendText();
+                }
+            });
+
+            // 🌟 首次自动进入"潜渊起始状态"，不再消耗真实 API Token！
+            enterIdleMode();
+            resetIdleTimer();
+        };
+    </script>
+</body>
+</html>
