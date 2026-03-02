@@ -912,6 +912,32 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
         }
 
+        /* ===== 移动端/桌面双端通用的物理战术按键 ===== */
+        .cyber-btn {
+            height: 45px;
+            padding: 0 15px;
+            border-radius: 25px;
+            background: rgba(0, 15, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #0ff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .cyber-btn:hover {
+            border-color: #f0f;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+            transform: scale(1.05);
+        }
+
         /* 多模型配置面板 */
         #apiConfigPanel {
             background: rgba(0, 10, 20, 0.8);
@@ -1652,6 +1678,9 @@
                 </div>
             </div>
 
+            <button class="cyber-btn" onclick="toggleMovieMode()" title="视觉剥夺：全息巨幕">👁️ 巨幕</button>
+            <button class="cyber-btn" onclick="toggleLiteraryMode()" title="意识深潜：归墟神谕">📜 修神</button>
+
             <div id="musicHub">
                 <button id="toggleIdleBtn" onclick="toggleIdleSystem()" title="开启/关闭潜渊待机系统" style="background: rgba(0,255,255,0.1); border: 1px solid #0ff; color: #0ff; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;">⏳ 待机: 开</button>
                 
@@ -1809,6 +1838,49 @@
             if (currentAudio) {
                 currentAudio.muted = isMuted;
             }
+        }
+        
+        // ==================== 触控阵列核心逻辑 (解救手机端) ====================
+        
+        // 对应原快捷键 1：巨幕模式
+        function toggleMovieMode() {
+            const videoEl = document.getElementById('tacticalVideo');
+            if (!videoEl) return;
+            
+            if (document.body.classList.contains("movie-mode")) {
+                // 退出巨幕
+                document.body.classList.remove("movie-mode");
+                videoEl.classList.remove("movie-mode");
+                videoEl.muted = true;
+                if (currentAudio && !isMuted) currentAudio.play().catch(e=>console.log(e));
+            } else {
+                // 进入巨幕 (同时强制关闭修神模式，防止冲突)
+                document.body.classList.add("movie-mode");
+                document.body.classList.remove("literary-mode");
+                videoEl.classList.add("movie-mode");
+                if (currentAudio) currentAudio.pause();
+                videoEl.muted = false;
+                videoEl.play().catch(e=>console.log(e));
+            }
+        }
+
+        // 对应原快捷键 2：修神模式
+        function toggleLiteraryMode() {
+            const videoEl = document.getElementById('tacticalVideo');
+            
+            if (document.body.classList.contains("literary-mode")) {
+                // 退出修神
+                document.body.classList.remove("literary-mode");
+            } else {
+                // 进入修神 (同时强制关闭巨幕模式)
+                document.body.classList.add("literary-mode");
+                document.body.classList.remove("movie-mode");
+                if(videoEl) videoEl.classList.remove("movie-mode");
+            }
+            
+            // 恢复战歌
+            if(videoEl) videoEl.muted = true;
+            if (currentAudio && !isMuted) currentAudio.play().catch(e=>console.log(e));
         }
         
         // ==================== 金威内置诗文（不再依赖任何外部文件） ====================
